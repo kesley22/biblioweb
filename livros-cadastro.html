@@ -1,0 +1,136 @@
+<!--/**
+ * Copyright 2023 Prof. Ms. Ricardo Leme All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap 5 CSS-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/fatecitu.png">
+  <link rel="stylesheet" href="css/estilo.css">
+  <title>Menu Inicial</title>
+</head>
+
+<body onload="verificaLogado();obtemDados('clientes')">
+  <nav class="navbar navbar-expand-lg navbar-light fundo-laranja-claro">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white" href="#">Biblioteca virtual</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active text-white fundo-nav-item-escuro" aria-current="page" href="menu.html"><i class="bi bi-house"></i> Início</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white fundo-nav-item-escuro" href="clientes.html"><i class="bi bi-person-vcard"></i> Cadastro de Clientes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white fundo-nav-item-escuro" href="relatorio.html"><i class="bi bi-journal-check"></i> Relatórios de Clientes</a>
+            <li class="nav-item">
+                <a class="nav-link text-white fundo-nav-item-escuro" href="livros.html"><i class="bi bi-journal-check"></i> Relatório de Livros</a>
+                <li class="nav-item">
+                  <a class="nav-link text-white fundo-nav-item-escuro" href="livros-cadastro.html"><i class="bi bi-journal-check"></i> Cadastro de livros</a>
+                </li>
+              </li>
+          </li>
+        </ul>
+      </div>
+      <div class="text-right">
+        <ul class="navbar-nav ms-auto flex-nowrap">
+
+          <div id="imagemUsuario"></div>
+          <li class="nav-item">
+            <button class="btn  btn-block fundo-button-escuro text-white button-border "  onclick="logoutFirebase()"><i
+                class="bi bi-box-arrow-in-right"></i> <i class="text-white">Logout</i></button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container-fluid p-2 text-center">
+    <h1>Cadastro de Livros</h1>
+
+  </div>
+  <div id="mensagemAlerta"></div>
+  <div class="container-fluid">
+    <div class="row">
+      <center>
+      <div class="col-md-5">
+        <h3 class="laranja-escuro"><i class="bi bi-person-badge"></i>Cadastro de Livros</h3>
+        <form id="formCadastro" method="post">
+          <div class="form-group mt-3">
+            <label for="nome">Nome do livro</label>
+            <input type="text" class="form-control text-center" name="nome" id="nome" placeholder="Harry Potter, Ready Number One" autofocus>
+          </div>
+          <div class="form-group mt-3">
+            <label for="genero">Gênero</label>
+            <select class="form-select" aria-label="Default select example" name="genero" id="genero">
+              <option selected value="Fantasia">Fantasia</option>
+              <option value="Ficção científica">Ficção científica</option>
+              <option value="Distopia">Distopia</option>
+              <option value="Ação e aventura">Ação e aventura</option>
+              <option value="Horror">Horror</option>
+              <option value="Suspense">Suspense</option>
+              <option value="Romance">Romance</option>
+              <option value="Conto">Conto</option>
+              <option value="Infantil">Infantil</option>
+            </select>
+          </div>
+          <div class="form-group mt-3">
+            <label for="nome">Autor(a)</label>
+            <input type="text" class="form-control text-center" name="autor" id="autor" placeholder="J. K. Rowlin, Ernest Cline" autofocus>
+          </div>
+          <div class="form-group mt-3">
+            <label for="genero">Editora</label>
+            <input type="genero" class="form-control text-center" name="editora" id="editora" placeholder="Novo mundo, Editora arvore">
+          </div>
+          <div class="form-group mt-3">
+            <label for="genero">Número de páginas</label>
+            <input type="Number" min="1" class="form-control text-center" name="numPaginas" id="numPaginas" placeholder="324, 140, 452">
+          </div>
+        
+          
+          <div class="form-group">
+            <input type="hidden" class="form-control" name="id" id="id">
+          </div>
+          <button id="btnSalvar" class="btn btn-block btn-success my-4" onclick="salvar(event, 'livros')"><i
+              class="bi bi-save-fill"></i> Salvar</button>
+          <button type="reset" class="btn btn-block btn-danger my-4"><i class="bi bi-x-square-fill"></i> Limpar</button>
+        </form>
+      </div>
+    </center>
+    </div>
+  </div>
+  <!-- Carregando os scripts do Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-storage-compat.js"></script>
+  <!-- Carregamento dos scripts do projeto-->
+  <script src="js/firebase/firebase.js"></script>
+  <script src="js/firebase/authentication.js"></script>
+  <script src="js/firebase/dados.js"></script>
+  <script src="js/util/alerta.js"></script>
+
+</body>
+
+</html>
