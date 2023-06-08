@@ -27,7 +27,7 @@
   <title>Menu Inicial</title>
 </head>
 
-<body onload="verificaLogado();obtemDados('clientes')">
+<body onload="verificaLogado(); carregaDadosAlteracaoLivroCadastro()">
   <nav class="navbar navbar-expand-lg navbar-light fundo-laranja-claro">
     <div class="container-fluid">
       <a class="navbar-brand text-white" href="#">Biblioteca virtual</a>
@@ -105,7 +105,7 @@
           </div>
           <div class="form-group mt-3">
             <label for="genero">Número de páginas</label>
-            <input type="Number" min="1" class="form-control text-center" name="numPaginas" id="numPaginas" placeholder="324, 140, 452">
+            <input type="Number" min="1" oninput="validity.valid||(value='');" class="form-control text-center" name="numPaginas" id="numPaginas" placeholder="324, 140, 452">
           </div>
         
           

@@ -15,6 +15,10 @@
  */
 'use strict' //modo estrito
 
+
+var isAlteracao
+var idModificacao
+
 /**
  * obtemDados.
  * Obtem dados da collection a partir do Firebase.
@@ -50,7 +54,7 @@ async function obtemDados(collection) {
       novaLinha.insertCell().innerHTML = '<small>' + item.val().numPaginas + '</small>'
       novaLinha.insertCell().innerHTML = '<small>' + item.val().dataInclusao + '</small>'
       novaLinha.insertCell().innerHTML = `<button class='btn btn-sm btn-danger' onclick=remover('${db}','${id}')><i class="bi bi-trash"></i></i></button>
-      <button class='btn btn-sm btn-warning' onclick=carregaDadosAlteracao('${db}','${id}')><i class="bi bi-pencil-square"></i></button>`
+      <button class='btn btn-sm btn-warning' onclick=carregaDadosAlteracaoLivro('${id}')><i class="bi bi-pencil-square"></i></button>`
 
     })
     let rodape = tabela.insertRow()
@@ -88,7 +92,7 @@ async function obtemDadosClientes(collection) {
       novaLinha.insertCell().innerHTML = '<small>' + item.val().cpf + '</small>'
       novaLinha.insertCell().innerHTML = '<small>' + item.val().dataInclusao + '</small>'
       novaLinha.insertCell().innerHTML = `<button class='btn btn-sm btn-danger' onclick=remover('${db}','${id}')><i class="bi bi-trash"></i></i></button>
-      <button class='btn btn-sm btn-warning' onclick=carregaDadosAlteracao('${db}','${id}')><i class="bi bi-pencil-square"></i></button>`
+      <button class='btn btn-sm btn-warning' href='clientes.html' onclick=carregaDadosAlteracao('${id}')><i class="bi bi-pencil-square"></i></button>`
 
     })
     let rodape = tabela.insertRow()
@@ -107,22 +111,62 @@ async function obtemDadosClientes(collection) {
  * @return {object} - Os dados do registro serão vinculados aos inputs do formulário.
  */
 
-async function carregaDadosAlteracao(db, id) {
-  await firebase.database().ref(db + '/' + id).on('value', (snapshot) => {
-    document.getElementById('id').value = id
-    document.getElementById('nome').value = snapshot.val().nome
-    document.getElementById('cpf').value = snapshot.val().cpf
-    document.getElementById('email').value = snapshot.val().email
-    if (snapshot.val().sexo === 'Masculino') {
-      document.getElementById('sexoM').checked = true
-    } else {
-      document.getElementById('sexoF').checked = true
-    }
-  })
+async function carregaDadosAlteracao(id) {
+  sessionStorage.setItem('isEdit', 'true')
+  sessionStorage.setItem('id', id)
 
-  document.getElementById('nome').focus() //Definimos o foco no campo nome
+  location.href = 'clientes.html'
 }
 
+async function carregaDadosAlteracaoCliente() {
+ 
+  if(sessionStorage.getItem('isEdit') === 'true') {
+
+    console.log('entrou no metodo')
+    console.log(sessionStorage.getItem('id'))
+    console.log(sessionStorage.getItem('isEdit'))
+
+    await firebase.database().ref('clientes' + '/' + sessionStorage.getItem('id')).on('value', (snapshot) => {
+      document.getElementById('id').value = sessionStorage.getItem('id')
+      document.getElementById('nome').value = snapshot.val().nome
+      document.getElementById('cpf').value = snapshot.val().cpf
+      document.getElementById('email').value = snapshot.val().email
+      if (snapshot.val().sexo === 'Masculino') {
+        document.getElementById('sexoM').checked = true
+      } else {
+        document.getElementById('sexoF').checked = true
+      }
+    })
+    document.getElementById('nome').focus() //Definimos o foco no campo nome
+  } else {
+    console.log('Deu errado')
+  }
+}
+
+async function carregaDadosAlteracaoLivro(id) {
+  sessionStorage.setItem('isEdit', 'true')
+  sessionStorage.setItem('id', id)
+
+  location.href = 'livros-cadastro.html'
+}
+
+async function carregaDadosAlteracaoLivroCadastro() {
+ 
+  if(sessionStorage.getItem('isEdit') === 'true') {
+
+    await firebase.database().ref('livros' + '/' + sessionStorage.getItem('id')).on('value', (snapshot) => {
+      document.getElementById('id').value = sessionStorage.getItem('id')
+      document.getElementById('nome').value = snapshot.val().nome
+      document.getElementById('genero').value = snapshot.val().genero
+      document.getElementById('autor').value = snapshot.val().autor
+      document.getElementById('editora').value = snapshot.val().editora
+      document.getElementById('numPaginas').value = snapshot.val().numPaginas      
+    })
+    document.getElementById('nome').focus() //Definimos o foco no campo nome
+  } else {
+    console.log('Deu errado')
+  }
+}
 
 
 /**
@@ -148,10 +192,11 @@ function salvar(event, collection) {
   else if (document.getElementById('editora').value === '') {
     alerta('⚠️ É obrigatório informar a editora!', 'warning')
   }
-  else if (document.getElementById('numPaginas').value === '') {
+  else if (document.getElementById('numPaginas').value === '' && document.getElementById('numPaginas').value > 0) {
     alerta('⚠️ É obrigatório informar o numero de paginas do livro!', 'warning')
   }
-  else if (document.getElementById('id').value !== '') {
+  else if (sessionStorage.getItem('id') && sessionStorage.getItem('id') !== '0') {
+    console.log('Entrou no if alterar')
     alterar(event, collection)
   }
   else {
@@ -192,7 +237,7 @@ async function incluir(event, collection) {
 
 }
 
-async function alterar(event, collection) {
+async function alterarCliente(event, collection) {
   let usuarioAtual = firebase.auth().currentUser
   let botaoSalvar = document.getElementById('btnSalvar')
   botaoSalvar.innerText = 'Aguarde...'
@@ -205,21 +250,47 @@ async function alterar(event, collection) {
   //Enviando os dados dos campos para o Firebase
   return await firebase.database().ref().child(collection + '/' + values.id).update({
     nome: values.nome.toUpperCase(),
-    nfe: values.nfe.toLowerCase(),
-    congelado: values.congelado.toUpperCase(),
-    dcompra: document.getElementById("dcompra").value,
-    pcusto: document.getElementById("pcusto").value,
-    pvenda: document.getElementById("pvenda").value,
-    cnpj: document.getElementById("cnpj").value,
-    usuarioAlteracao: {
-      uid: usuarioAtual.uid,
-      nome: usuarioAtual.displayName,
-      urlImagem: usuarioAtual.photoURL,
-      email: usuarioAtual.email,
-      dataAlteracao: new Date()
-    }
+    email: values.email.toLowerCase(),
+    sexo: values.sexo,
+    cpf: values.cpf
   })
     .then(() => {
+      sessionStorage.setItem('id', '0')
+      sessionStorage.setItem('isEdit', 'false')
+      alerta('✅ Registro alterado com sucesso!', 'success')
+      document.getElementById('formCadastro').reset()
+      document.getElementById('id').value = ''
+      botaoSalvar.innerHTML = '<i class="bi bi-save-fill"></i> Salvar'
+    })
+    .catch(error => {
+      console.error(error.code)
+      console.error(error.message)
+      alerta('❌ Falha ao alterar: ' + error.message, 'danger')
+    })
+}
+
+async function alterar(event, collection) {
+  let usuarioAtual = firebase.auth().currentUser
+  let botaoSalvar = document.getElementById('btnSalvar')
+  const select = document.getElementById('genero')
+  botaoSalvar.innerText = 'Aguarde...'
+  event.preventDefault()
+  //Obtendo os campos do formulário
+  const form = document.forms[0];
+  const data = new FormData(form);
+  //Obtendo os valores dos campos
+  const values = Object.fromEntries(data.entries());
+  //Enviando os dados dos campos para o Firebase
+  return await firebase.database().ref().child(collection + '/' + values.id).update({
+    nome: values.nome,
+    genero: select.options[select.selectedIndex].value,
+    autor: values.autor,
+    editora: values.editora,
+    numPaginas: values.numPaginas,
+  })
+    .then(() => {
+      sessionStorage.setItem('id', '0')
+      sessionStorage.setItem('isEdit', 'false')
       alerta('✅ Registro alterado com sucesso!', 'success')
       document.getElementById('formCadastro').reset()
       document.getElementById('id').value = ''
@@ -244,7 +315,9 @@ function salvarCliente(event, collection) {
   event.preventDefault() // evita que o formulário seja recarregado
   //Verifica os campos obrigatórios
 
-  if (document.getElementByif('nome').value == '') {
+  console.log('entra em salvar cliente')
+
+  if (document.getElementById('nome').value == '') {
     alerta('⚠️ É obrigatório informar o nome!', 'warning')
   }
   else if (!checkValidity(document.getElementById('email').value)) {
@@ -253,8 +326,9 @@ function salvarCliente(event, collection) {
   else if (!/^([0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2})$/.test(document.getElementById('cpf').value)) {
     alerta('⚠️ O CPF informado é inválido!', 'warning')
   }
-  else if (document.getElementById('id').value !== '') {
-    alterar(event, collection)
+  else if (sessionStorage.getItem('id') && sessionStorage.getItem('id') !== '0') {
+    console.log('Entrou no if de alteração')
+    alterarCliente(event, collection)
   }
   else {
     incluirCliente(event, collection)
