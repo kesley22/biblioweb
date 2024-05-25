@@ -67,7 +67,6 @@
     </div>
   </nav>
   <div class="container-fluid p-2 text-center">
-    <h1>Cadastro de Livros</h1>
 
   </div>
   <div id="mensagemAlerta"></div>
@@ -75,39 +74,20 @@
     <div class="row">
       <center>
       <div class="col-md-5">
-        <h3 class="laranja-escuro"><i class="bi bi-person-badge"></i>Cadastro de Livros</h3>
+        <h3 class="laranja-escuro"><i class="bi bi-person-badge"></i>Cadastro de Transportadora</h3>
         <form id="formCadastro" method="post">
           <div class="form-group mt-3">
-            <label for="nome">Nome do livro</label>
-            <input type="text" class="form-control text-center" name="nome" id="nome" placeholder="Harry Potter, Ready Number One" autofocus>
+            <label for="nome">Nome da Transportadora</label>
+            <input type="text" class="form-control text-center" name="nome" id="nome">
           </div>
           <div class="form-group mt-3">
-            <label for="genero">Gênero</label>
-            <select class="form-select" aria-label="Default select example" name="genero" id="genero">
-              <option selected value="Fantasia">Fantasia</option>
-              <option value="Ficção científica">Ficção científica</option>
-              <option value="Distopia">Distopia</option>
-              <option value="Ação e aventura">Ação e aventura</option>
-              <option value="Horror">Horror</option>
-              <option value="Suspense">Suspense</option>
-              <option value="Romance">Romance</option>
-              <option value="Conto">Conto</option>
-              <option value="Infantil">Infantil</option>
-            </select>
+            <label for="nome">Cidade</label>
+            <input type="text" class="form-control text-center" name="autor" id="autor"autofocus>
           </div>
           <div class="form-group mt-3">
-            <label for="nome">Autor(a)</label>
-            <input type="text" class="form-control text-center" name="autor" id="autor" placeholder="J. K. Rowlin, Ernest Cline" autofocus>
+            <label for="genero">Estado</label>
+            <input type="genero" class="form-control text-center" name="editora" id="editora">
           </div>
-          <div class="form-group mt-3">
-            <label for="genero">Editora</label>
-            <input type="genero" class="form-control text-center" name="editora" id="editora" placeholder="Novo mundo, Editora arvore">
-          </div>
-          <div class="form-group mt-3">
-            <label for="genero">Número de páginas</label>
-            <input type="Number" min="1" oninput="validity.valid||(value='');" class="form-control text-center" name="numPaginas" id="numPaginas" placeholder="324, 140, 452">
-          </div>
-        
           
           <div class="form-group">
             <input type="hidden" class="form-control" name="id" id="id">
